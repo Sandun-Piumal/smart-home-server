@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home Control</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h1>🏠 Smart Home</h1>
+            <div class="input-group">
+                <input type="text" id="username" placeholder="Username" value="admin">
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" placeholder="Password" value="admin123">
+            </div>
+            <button onclick="login()">Login</button>
+            <p id="message"></p>
+        </div>
+    </div>
+
+    <div id="app" class="hidden">
+        <header>
+            <h1>Smart Home Dashboard</h1>
+            <div id="status">Connected ✅</div>
+        </header>
+        
+        <div class="dashboard">
+            <div class="card">
+                <h3>🌡️ Temperature</h3>
+                <div class="value" id="temp">24°C</div>
+            </div>
+            <div class="card">
+                <h3>💡 Lights</h3>
+                <button onclick="toggleLights()">Toggle Lights</button>
+            </div>
+            <div class="card">
+                <h3>🔒 Security</h3>
+                <div class="value">Active</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+              </html>
