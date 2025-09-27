@@ -1,23 +1,12 @@
+// netlify/functions/server.js
 const express = require('express');
-const http = require('http');
-const socketIo = require('socket.io');
-const path = require('path');
+const serverless = require('serverless-http');
 
 const app = express();
-const server = http.createServer(app);
-const io = socketIo(server);
 
-// Middleware
-app.use(express.static('public'));
 app.use(express.json());
 
-// Serve main page
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-// Login API
-app.post('/api/login', (req, res) => {
+app.post('/.netlify/functions/server/api/login', (req, res) => {
     const { username, password } = req.body;
     
     if (username === 'admin' && password === 'admin123') {
@@ -34,17 +23,4 @@ app.post('/api/login', (req, res) => {
     }
 });
 
-// Socket.io for real-time communication
-io.on('connection', (socket) => {
-    console.log('User connected');
-    
-    socket.emit('welcome', { 
-        message: 'Connected to Smart Home!',
-        time: new Date() 
-    });
-});
-
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-    console.log(`🚀 Smart Home Server running on port ${PORT}`);
-});
+module.exports.handler = serverless(app);
