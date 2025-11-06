@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complete Auth System</title>
+    <title>Secure Auth System</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -135,19 +135,26 @@
             border-radius: 5px;
             text-align: center;
             margin-bottom: 1rem;
-            display: none;
+        }
+        .admin-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .admin-link a {
+            color: #007bff;
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="token-saved" id="tokenSaved">
-            ✅ GitHub Token Saved Successfully! You can now register and login.
+        <div class="token-saved">
+            ✅ GitHub Token Active! System Ready.
         </div>
 
         <div class="logo">
-            <h1>🔐 AuthPro</h1>
-            <p>Secure Cloud Authentication</p>
+            <h1>🔐 SecureAuth</h1>
+            <p>Professional Authentication System</p>
         </div>
 
         <div class="tabs">
@@ -208,27 +215,63 @@
             <button class="btn" onclick="signup()">Create Account</button>
             <div id="signupMessage" class="message"></div>
         </div>
+
+        <div class="admin-link">
+            <a href="admin.html">🔧 Admin Panel</a>
+        </div>
     </div>
 
     <script>
         // Auto-save your token
         const yourToken = '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';
         localStorage.setItem('githubToken', yourToken);
-        
-        // Show success message
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('tokenSaved').style.display = 'block';
-            
-            // Set max date for birthday (13 years ago)
-            const maxDate = new Date();
-            maxDate.setFullYear(maxDate.getFullYear() - 13);
-            document.getElementById('birthday').max = maxDate.toISOString().split('T')[0];
-            
-            // Set min date for birthday (100 years ago)
-            const minDate = new Date();
-            minDate.setFullYear(minDate.getFullYear() - 100);
-            document.getElementById('birthday').min = minDate.toISOString().split('T')[0];
-        });
+
+        // Initialize users in localStorage if not exists
+        if (!localStorage.getItem('users')) {
+            const initialUsers = [
+                {
+                    id: 'user_1',
+                    personal: {
+                        fullName: 'John Doe',
+                        phone: '0712345678',
+                        birthday: '1990-05-15',
+                        age: 33,
+                        email: 'user1@example.com'
+                    },
+                    auth: {
+                        password: btoa('123456'),
+                        role: 'user',
+                        status: 'active'
+                    },
+                    timestamps: {
+                        createdAt: '2024-01-01T00:00:00.000Z',
+                        lastLogin: null,
+                        updatedAt: new Date().toISOString()
+                    }
+                },
+                {
+                    id: 'admin_1',
+                    personal: {
+                        fullName: 'System Admin',
+                        phone: '0777777777',
+                        birthday: '1985-01-01',
+                        age: 38,
+                        email: 'admin@example.com'
+                    },
+                    auth: {
+                        password: btoa('admin123'),
+                        role: 'admin',
+                        status: 'active'
+                    },
+                    timestamps: {
+                        createdAt: '2024-01-01T00:00:00.000Z',
+                        lastLogin: null,
+                        updatedAt: new Date().toISOString()
+                    }
+                }
+            ];
+            localStorage.setItem('users', JSON.stringify(initialUsers));
+        }
 
         // Tab switching
         function showTab(tabName) {
@@ -253,8 +296,8 @@
             }
         }
 
-        // Login function
-        async function login() {
+        // Login function - FIXED SECURITY
+        function login() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
 
@@ -263,19 +306,47 @@
                 return;
             }
 
-            showMessage('info', 'Logging in...', 'login');
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const user = users.find(u => 
+                u.personal.email === email && 
+                u.auth.password === btoa(password)
+            );
             
-            // Simulate login process
+            if (!user) {
+                showMessage('error', 'Invalid email or password!', 'login');
+                return;
+            }
+
+            if (user.auth.status !== 'active') {
+                showMessage('error', 'Account is deactivated!', 'login');
+                return;
+            }
+
+            // Update last login
+            user.timestamps.lastLogin = new Date().toISOString();
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            // Store current user (ONLY their data)
+            const currentUser = {
+                id: user.id,
+                personal: user.personal,
+                auth: {
+                    role: user.auth.role,
+                    status: user.auth.status
+                },
+                timestamps: user.timestamps
+            };
+            
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+            showMessage('success', 'Login successful! Redirecting...', 'login');
             setTimeout(() => {
-                showMessage('success', 'Login successful! Redirecting...', 'login');
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 1500);
-            }, 1000);
+                window.location.href = 'dashboard.html';
+            }, 1500);
         }
 
-        // Signup function
-        async function signup() {
+        // Signup function - FIXED
+        function signup() {
             const fullName = document.getElementById('fullName').value;
             const phone = document.getElementById('phone').value;
             const birthday = document.getElementById('birthday').value;
@@ -299,24 +370,72 @@
                 return;
             }
 
-            showMessage('info', 'Creating your account...', 'signup');
+            const users = JSON.parse(localStorage.getItem('users')) || [];
             
-            // Simulate signup process
-            setTimeout(() => {
-                showMessage('success', 'Account created successfully! 🎉 Redirecting to login...', 'signup');
-                
-                // Clear form
-                document.getElementById('fullName').value = '';
-                document.getElementById('phone').value = '';
-                document.getElementById('birthday').value = '';
-                document.getElementById('signupEmail').value = '';
-                document.getElementById('signupPassword').value = '';
-                document.getElementById('confirmPassword').value = '';
-                
-                // Switch to login after 2 seconds
-                setTimeout(() => showTab('login'), 2000);
-            }, 1500);
+            // Check if user already exists
+            if (users.find(u => u.personal.email === email)) {
+                showMessage('error', 'User already exists with this email!', 'signup');
+                return;
+            }
+
+            if (users.find(u => u.personal.phone === phone)) {
+                showMessage('error', 'User already exists with this phone number!', 'signup');
+                return;
+            }
+
+            // Calculate age
+            const birthDate = new Date(birthday);
+            const age = new Date().getFullYear() - birthDate.getFullYear();
+
+            // Create new user
+            const newUser = {
+                id: 'user_' + Date.now(),
+                personal: {
+                    fullName: fullName,
+                    phone: phone,
+                    birthday: birthday,
+                    age: age,
+                    email: email
+                },
+                auth: {
+                    password: btoa(password),
+                    role: 'user',
+                    status: 'active'
+                },
+                timestamps: {
+                    createdAt: new Date().toISOString(),
+                    lastLogin: null,
+                    updatedAt: new Date().toISOString()
+                }
+            };
+
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+
+            showMessage('success', 'Account created successfully! 🎉', 'signup');
+            
+            // Clear form
+            document.getElementById('fullName').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('birthday').value = '';
+            document.getElementById('signupEmail').value = '';
+            document.getElementById('signupPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+            
+            // Switch to login after 2 seconds
+            setTimeout(() => showTab('login'), 2000);
         }
+
+        // Set date limits for birthday
+        document.addEventListener('DOMContentLoaded', function() {
+            const maxDate = new Date();
+            maxDate.setFullYear(maxDate.getFullYear() - 13);
+            document.getElementById('birthday').max = maxDate.toISOString().split('T')[0];
+            
+            const minDate = new Date();
+            minDate.setFullYear(minDate.getFullYear() - 100);
+            document.getElementById('birthday').min = minDate.toISOString().split('T')[0];
+        });
     </script>
 </body>
 </html>
