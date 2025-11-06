@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Auth System</title>
+    <title>Secure Login System</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -23,138 +23,32 @@
             width: 100%; 
             max-width: 450px;
         }
-        .logo { 
-            text-align: center; 
-            margin-bottom: 2rem; 
-            color: #333;
-        }
-        .logo h1 { 
-            font-size: 2rem; 
-            margin-bottom: 0.5rem;
-        }
-        .tabs { 
-            display: flex; 
-            margin-bottom: 1.5rem; 
-            background: #f8f9fa; 
-            border-radius: 10px; 
-            padding: 5px;
-        }
-        .tab { 
-            flex: 1; 
-            padding: 12px; 
-            text-align: center; 
-            background: transparent; 
-            cursor: pointer; 
-            border: none; 
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-        .tab.active { 
-            background: #007bff; 
-            color: white; 
-            box-shadow: 0 2px 10px rgba(0,123,255,0.3);
-        }
-        .form { 
-            display: none; 
-        }
-        .form.active { 
-            display: block; 
-        }
-        .form-group { 
-            margin-bottom: 1rem; 
-        }
-        label { 
-            display: block; 
-            margin-bottom: 5px; 
-            font-weight: bold; 
-            color: #555;
-        }
-        input, select { 
-            width: 100%; 
-            padding: 12px 15px; 
-            border: 2px solid #e9ecef; 
-            border-radius: 8px; 
-            font-size: 16px; 
-            transition: border-color 0.3s;
-        }
-        input:focus, select:focus {
-            border-color: #007bff;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
-        }
-        .btn { 
-            width: 100%; 
-            padding: 14px; 
-            background: linear-gradient(135deg, #007bff, #0056b3); 
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
-            font-size: 16px; 
-            cursor: pointer; 
-            transition: all 0.3s;
-            margin-top: 10px;
-        }
-        .btn:hover { 
-            transform: translateY(-2px); 
-            box-shadow: 0 5px 15px rgba(0,123,255,0.4);
-        }
-        .message { 
-            margin-top: 1rem; 
-            padding: 10px; 
-            border-radius: 5px; 
-            text-align: center; 
-        }
-        .error { 
-            background: #f8d7da; 
-            color: #721c24; 
-            border: 1px solid #f5c6cb;
-        }
-        .success { 
-            background: #d4edda; 
-            color: #155724; 
-            border: 1px solid #c3e6cb;
-        }
-        .info { 
-            background: #d1ecf1; 
-            color: #0c5460; 
-            border: 1px solid #bee5eb;
-            font-size: 14px;
-        }
-        .form-row {
-            display: flex;
-            gap: 15px;
-        }
-        .form-row .form-group {
-            flex: 1;
-        }
-        .token-saved {
-            background: #d4edda;
-            color: #155724;
-            padding: 10px;
-            border-radius: 5px;
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-        .admin-link {
-            text-align: center;
-            margin-top: 1rem;
-        }
-        .admin-link a {
-            color: #007bff;
-            text-decoration: none;
-        }
+        .logo { text-align: center; margin-bottom: 2rem; color: #333; }
+        .logo h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        .tabs { display: flex; margin-bottom: 1.5rem; background: #f8f9fa; border-radius: 10px; padding: 5px; }
+        .tab { flex: 1; padding: 12px; text-align: center; background: transparent; cursor: pointer; border: none; border-radius: 8px; font-size: 16px; }
+        .tab.active { background: #007bff; color: white; }
+        .form { display: none; }
+        .form.active { display: block; }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        input { width: 100%; padding: 12px 15px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 16px; }
+        input:focus { border-color: #007bff; outline: none; }
+        .btn { width: 100%; padding: 14px; background: #007bff; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        .btn:hover { background: #0056b3; }
+        .message { margin-top: 1rem; padding: 10px; border-radius: 5px; text-align: center; display: none; }
+        .error { background: #f8d7da; color: #721c24; }
+        .success { background: #d4edda; color: #155724; }
+        .form-row { display: flex; gap: 15px; }
+        .form-row .form-group { flex: 1; }
+        .system-info { background: #e7f3ff; padding: 10px; border-radius: 5px; margin-top: 1rem; text-align: center; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="token-saved">
-            ✅ GitHub Token Active! System Ready.
-        </div>
-
         <div class="logo">
-            <h1>🔐 SecureAuth</h1>
-            <p>Professional Authentication System</p>
+            <h1>🔐 Auth System</h1>
+            <p>Secure Login & Registration</p>
         </div>
 
         <div class="tabs">
@@ -164,113 +58,79 @@
 
         <!-- Login Form -->
         <div id="loginForm" class="form active">
-            <h2 style="text-align: center; margin-bottom: 1.5rem; color: #333;">Welcome Back</h2>
+            <h2 style="text-align: center; margin-bottom: 1.5rem; color: #333;">Login</h2>
             <div class="form-group">
-                <label for="loginEmail">Email Address</label>
-                <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                <label for="loginEmail">Email</label>
+                <input type="email" id="loginEmail" placeholder="your@email.com" required>
             </div>
             <div class="form-group">
                 <label for="loginPassword">Password</label>
-                <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                <input type="password" id="loginPassword" placeholder="Your password" required>
             </div>
-            <button class="btn" onclick="login()">Login to Account</button>
+            <button class="btn" onclick="login()">Login</button>
             <div id="loginMessage" class="message"></div>
         </div>
 
         <!-- Signup Form -->
         <div id="signupForm" class="form">
             <h2 style="text-align: center; margin-bottom: 1.5rem; color: #333;">Create Account</h2>
-            
             <div class="form-group">
                 <label for="fullName">Full Name</label>
-                <input type="text" id="fullName" placeholder="Enter your full name" required>
+                <input type="text" id="fullName" placeholder="John Doe" required>
             </div>
-
             <div class="form-row">
                 <div class="form-group">
-                    <label for="phone">Phone Number</label>
-                    <input type="tel" id="phone" placeholder="07X XXX XXXX" required>
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone" placeholder="0712345678" required>
                 </div>
                 <div class="form-group">
                     <label for="birthday">Birthday</label>
                     <input type="date" id="birthday" required>
                 </div>
             </div>
-
             <div class="form-group">
-                <label for="signupEmail">Email Address</label>
-                <input type="email" id="signupEmail" placeholder="Enter your email" required>
+                <label for="signupEmail">Email</label>
+                <input type="email" id="signupEmail" placeholder="your@email.com" required>
             </div>
-
             <div class="form-group">
                 <label for="signupPassword">Password</label>
-                <input type="password" id="signupPassword" placeholder="Create a strong password" required>
+                <input type="password" id="signupPassword" placeholder="Min 6 characters" required>
             </div>
-
             <div class="form-group">
                 <label for="confirmPassword">Confirm Password</label>
-                <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+                <input type="password" id="confirmPassword" placeholder="Confirm password" required>
             </div>
-
             <button class="btn" onclick="signup()">Create Account</button>
             <div id="signupMessage" class="message"></div>
         </div>
 
-        <div class="admin-link">
-            <a href="admin.html">🔧 Admin Panel</a>
+        <div class="system-info">
+            <p><strong>Test Accounts:</strong><br>
+            Admin: admin@example.com / admin123<br>
+            User: user@example.com / 123456</p>
         </div>
     </div>
 
     <script>
-        // Auto-save your token
-        const yourToken = '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';
-        localStorage.setItem('githubToken', yourToken);
-
-        // Initialize users in localStorage if not exists
-        if (!localStorage.getItem('users')) {
-            const initialUsers = [
-                {
-                    id: 'user_1',
-                    personal: {
-                        fullName: 'John Doe',
-                        phone: '0712345678',
-                        birthday: '1990-05-15',
-                        age: 33,
-                        email: 'user1@example.com'
+        // Initialize system
+        function initializeSystem() {
+            if (!localStorage.getItem('users')) {
+                const defaultUsers = [
+                    {
+                        id: 'admin_1',
+                        personal: { fullName: 'System Admin', phone: '0712345678', birthday: '1990-01-01', age: 33, email: 'admin@example.com' },
+                        auth: { password: btoa('admin123'), role: 'admin', status: 'active' },
+                        timestamps: { createdAt: new Date().toISOString(), lastLogin: null }
                     },
-                    auth: {
-                        password: btoa('123456'),
-                        role: 'user',
-                        status: 'active'
-                    },
-                    timestamps: {
-                        createdAt: '2024-01-01T00:00:00.000Z',
-                        lastLogin: null,
-                        updatedAt: new Date().toISOString()
+                    {
+                        id: 'user_1', 
+                        personal: { fullName: 'Test User', phone: '0776543210', birthday: '1995-05-15', age: 28, email: 'user@example.com' },
+                        auth: { password: btoa('123456'), role: 'user', status: 'active' },
+                        timestamps: { createdAt: new Date().toISOString(), lastLogin: null }
                     }
-                },
-                {
-                    id: 'admin_1',
-                    personal: {
-                        fullName: 'System Admin',
-                        phone: '0777777777',
-                        birthday: '1985-01-01',
-                        age: 38,
-                        email: 'admin@example.com'
-                    },
-                    auth: {
-                        password: btoa('admin123'),
-                        role: 'admin',
-                        status: 'active'
-                    },
-                    timestamps: {
-                        createdAt: '2024-01-01T00:00:00.000Z',
-                        lastLogin: null,
-                        updatedAt: new Date().toISOString()
-                    }
-                }
-            ];
-            localStorage.setItem('users', JSON.stringify(initialUsers));
+                ];
+                localStorage.setItem('users', JSON.stringify(defaultUsers));
+            }
         }
 
         // Tab switching
@@ -278,47 +138,33 @@
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.form').forEach(form => form.classList.remove('active'));
             
-            document.querySelector(`.tab:nth-child(${tabName === 'login' ? 1 : 2})`).classList.add('active');
+            event.target.classList.add('active');
             document.getElementById(tabName + 'Form').classList.add('active');
-            
-            // Clear messages
-            document.getElementById('loginMessage').style.display = 'none';
-            document.getElementById('signupMessage').style.display = 'none';
         }
 
-        // Show message function
-        function showMessage(type, message, formType = 'login') {
+        // Show message
+        function showMessage(type, message, formType) {
             const messageDiv = document.getElementById(formType + 'Message');
-            if (messageDiv) {
-                messageDiv.className = `message ${type}`;
-                messageDiv.textContent = message;
-                messageDiv.style.display = 'block';
-            }
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = message;
+            messageDiv.style.display = 'block';
         }
 
-        // Login function - FIXED SECURITY
+        // Login function
         function login() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
 
             if (!email || !password) {
-                showMessage('error', 'Please fill all fields!', 'login');
+                showMessage('error', 'Please fill all fields', 'login');
                 return;
             }
 
-            const users = JSON.parse(localStorage.getItem('users')) || [];
-            const user = users.find(u => 
-                u.personal.email === email && 
-                u.auth.password === btoa(password)
-            );
-            
+            const users = JSON.parse(localStorage.getItem('users'));
+            const user = users.find(u => u.personal.email === email && u.auth.password === btoa(password));
+
             if (!user) {
-                showMessage('error', 'Invalid email or password!', 'login');
-                return;
-            }
-
-            if (user.auth.status !== 'active') {
-                showMessage('error', 'Account is deactivated!', 'login');
+                showMessage('error', 'Invalid email or password', 'login');
                 return;
             }
 
@@ -326,26 +172,16 @@
             user.timestamps.lastLogin = new Date().toISOString();
             localStorage.setItem('users', JSON.stringify(users));
             
-            // Store current user (ONLY their data)
-            const currentUser = {
-                id: user.id,
-                personal: user.personal,
-                auth: {
-                    role: user.auth.role,
-                    status: user.auth.status
-                },
-                timestamps: user.timestamps
-            };
-            
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            // Store current user
+            localStorage.setItem('currentUser', JSON.stringify(user));
             
             showMessage('success', 'Login successful! Redirecting...', 'login');
             setTimeout(() => {
                 window.location.href = 'dashboard.html';
-            }, 1500);
+            }, 1000);
         }
 
-        // Signup function - FIXED
+        // Signup function
         function signup() {
             const fullName = document.getElementById('fullName').value;
             const phone = document.getElementById('phone').value;
@@ -356,85 +192,64 @@
 
             // Validation
             if (!fullName || !phone || !birthday || !email || !password || !confirmPassword) {
-                showMessage('error', 'Please fill all fields!', 'signup');
+                showMessage('error', 'Please fill all fields', 'signup');
                 return;
             }
 
             if (password !== confirmPassword) {
-                showMessage('error', 'Passwords do not match!', 'signup');
+                showMessage('error', 'Passwords do not match', 'signup');
                 return;
             }
 
             if (password.length < 6) {
-                showMessage('error', 'Password must be at least 6 characters!', 'signup');
+                showMessage('error', 'Password must be 6+ characters', 'signup');
                 return;
             }
 
-            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const users = JSON.parse(localStorage.getItem('users'));
             
-            // Check if user already exists
+            // Check existing user
             if (users.find(u => u.personal.email === email)) {
-                showMessage('error', 'User already exists with this email!', 'signup');
-                return;
-            }
-
-            if (users.find(u => u.personal.phone === phone)) {
-                showMessage('error', 'User already exists with this phone number!', 'signup');
+                showMessage('error', 'Email already exists', 'signup');
                 return;
             }
 
             // Calculate age
-            const birthDate = new Date(birthday);
-            const age = new Date().getFullYear() - birthDate.getFullYear();
+            const age = new Date().getFullYear() - new Date(birthday).getFullYear();
 
-            // Create new user
+            // Create user
             const newUser = {
                 id: 'user_' + Date.now(),
-                personal: {
-                    fullName: fullName,
-                    phone: phone,
-                    birthday: birthday,
-                    age: age,
-                    email: email
-                },
-                auth: {
-                    password: btoa(password),
-                    role: 'user',
-                    status: 'active'
-                },
-                timestamps: {
-                    createdAt: new Date().toISOString(),
-                    lastLogin: null,
-                    updatedAt: new Date().toISOString()
-                }
+                personal: { fullName, phone, birthday, age, email },
+                auth: { password: btoa(password), role: 'user', status: 'active' },
+                timestamps: { createdAt: new Date().toISOString(), lastLogin: null }
             };
 
             users.push(newUser);
             localStorage.setItem('users', JSON.stringify(users));
-
-            showMessage('success', 'Account created successfully! 🎉', 'signup');
             
-            // Clear form
-            document.getElementById('fullName').value = '';
-            document.getElementById('phone').value = '';
-            document.getElementById('birthday').value = '';
-            document.getElementById('signupEmail').value = '';
-            document.getElementById('signupPassword').value = '';
-            document.getElementById('confirmPassword').value = '';
+            showMessage('success', 'Account created successfully!', 'signup');
             
-            // Switch to login after 2 seconds
-            setTimeout(() => showTab('login'), 2000);
+            // Clear form and switch to login
+            setTimeout(() => {
+                document.getElementById('fullName').value = '';
+                document.getElementById('phone').value = '';
+                document.getElementById('birthday').value = '';
+                document.getElementById('signupEmail').value = '';
+                document.getElementById('signupPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+                showTab('login');
+            }, 2000);
         }
 
-        // Set date limits for birthday
+        // Initialize on load
         document.addEventListener('DOMContentLoaded', function() {
+            initializeSystem();
+            
+            // Set date limits
             const maxDate = new Date();
             maxDate.setFullYear(maxDate.getFullYear() - 13);
             document.getElementById('birthday').max = maxDate.toISOString().split('T')[0];
-            
-            const minDate = new Date();
-            minDate.setFullYear(minDate.getFullYear() - 100);
-            document.getElementById('birthday').min = minDate.toISOString().split('T')[0];
         });
     </script>
 </body>
