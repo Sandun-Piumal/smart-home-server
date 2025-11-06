@@ -41,7 +41,7 @@
         .success { background: #d4edda; color: #155724; }
         .form-row { display: flex; gap: 15px; }
         .form-row .form-group { flex: 1; }
-        .system-info { background: #e7f3ff; padding: 10px; border-radius: 5px; margin-top: 1rem; text-align: center; }
+        .system-info { background: #e7f3ff; padding: 10px; border-radius: 5px; margin-top: 1rem; text-align: center; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -112,24 +112,56 @@
     </div>
 
     <script>
+        // Simple password hashing (FIXED)
+        function hashPassword(password) {
+            return btoa(unescape(encodeURIComponent(password)));
+        }
+
         // Initialize system
         function initializeSystem() {
             if (!localStorage.getItem('users')) {
                 const defaultUsers = [
                     {
                         id: 'admin_1',
-                        personal: { fullName: 'System Admin', phone: '0712345678', birthday: '1990-01-01', age: 33, email: 'admin@example.com' },
-                        auth: { password: btoa('admin123'), role: 'admin', status: 'active' },
-                        timestamps: { createdAt: new Date().toISOString(), lastLogin: null }
+                        personal: { 
+                            fullName: 'System Admin', 
+                            phone: '0712345678', 
+                            birthday: '1990-01-01', 
+                            age: 33, 
+                            email: 'admin@example.com' 
+                        },
+                        auth: { 
+                            password: hashPassword('admin123'), 
+                            role: 'admin', 
+                            status: 'active' 
+                        },
+                        timestamps: { 
+                            createdAt: new Date().toISOString(), 
+                            lastLogin: null 
+                        }
                     },
                     {
                         id: 'user_1', 
-                        personal: { fullName: 'Test User', phone: '0776543210', birthday: '1995-05-15', age: 28, email: 'user@example.com' },
-                        auth: { password: btoa('123456'), role: 'user', status: 'active' },
-                        timestamps: { createdAt: new Date().toISOString(), lastLogin: null }
+                        personal: { 
+                            fullName: 'Test User', 
+                            phone: '0776543210', 
+                            birthday: '1995-05-15', 
+                            age: 28, 
+                            email: 'user@example.com' 
+                        },
+                        auth: { 
+                            password: hashPassword('123456'), 
+                            role: 'user', 
+                            status: 'active' 
+                        },
+                        timestamps: { 
+                            createdAt: new Date().toISOString(), 
+                            lastLogin: null 
+                        }
                     }
                 ];
                 localStorage.setItem('users', JSON.stringify(defaultUsers));
+                console.log('System initialized with default users');
             }
         }
 
@@ -138,8 +170,17 @@
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.form').forEach(form => form.classList.remove('active'));
             
-            event.target.classList.add('active');
-            document.getElementById(tabName + 'Form').classList.add('active');
+            // Activate clicked tab
+            const tabs = document.querySelectorAll('.tab');
+            const forms = document.querySelectorAll('.form');
+            
+            if (tabName === 'login') {
+                tabs[0].classList.add('active');
+                forms[0].classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+                forms[1].classList.add('active');
+            }
         }
 
         // Show message
@@ -148,9 +189,14 @@
             messageDiv.className = `message ${type}`;
             messageDiv.textContent = message;
             messageDiv.style.display = 'block';
+            
+            // Auto hide after 3 seconds
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 3000);
         }
 
-        // Login function
+        // Login function (FIXED)
         function login() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
@@ -160,10 +206,24 @@
                 return;
             }
 
-            const users = JSON.parse(localStorage.getItem('users'));
-            const user = users.find(u => u.personal.email === email && u.auth.password === btoa(password));
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            console.log('All users:', users);
+            
+            // Find user with exact email match
+            const user = users.find(u => u.personal.email === email);
+            console.log('Found user:', user);
 
             if (!user) {
+                showMessage('error', 'Invalid email or password', 'login');
+                return;
+            }
+
+            // Check password (FIXED)
+            const hashedInputPassword = hashPassword(password);
+            console.log('Input password hash:', hashedInputPassword);
+            console.log('Stored password hash:', user.auth.password);
+
+            if (user.auth.password !== hashedInputPassword) {
                 showMessage('error', 'Invalid email or password', 'login');
                 return;
             }
@@ -181,7 +241,7 @@
             }, 1000);
         }
 
-        // Signup function
+        // Signup function (FIXED)
         function signup() {
             const fullName = document.getElementById('fullName').value;
             const phone = document.getElementById('phone').value;
@@ -206,7 +266,7 @@
                 return;
             }
 
-            const users = JSON.parse(localStorage.getItem('users'));
+            const users = JSON.parse(localStorage.getItem('users')) || [];
             
             // Check existing user
             if (users.find(u => u.personal.email === email)) {
@@ -220,9 +280,22 @@
             // Create user
             const newUser = {
                 id: 'user_' + Date.now(),
-                personal: { fullName, phone, birthday, age, email },
-                auth: { password: btoa(password), role: 'user', status: 'active' },
-                timestamps: { createdAt: new Date().toISOString(), lastLogin: null }
+                personal: { 
+                    fullName, 
+                    phone, 
+                    birthday, 
+                    age, 
+                    email 
+                },
+                auth: { 
+                    password: hashPassword(password), 
+                    role: 'user', 
+                    status: 'active' 
+                },
+                timestamps: { 
+                    createdAt: new Date().toISOString(), 
+                    lastLogin: null 
+                }
             };
 
             users.push(newUser);
@@ -250,6 +323,12 @@
             const maxDate = new Date();
             maxDate.setFullYear(maxDate.getFullYear() - 13);
             document.getElementById('birthday').max = maxDate.toISOString().split('T')[0];
+            
+            const minDate = new Date();
+            minDate.setFullYear(minDate.getFullYear() - 100);
+            document.getElementById('birthday').min = minDate.toISOString().split('T')[0];
+
+            console.log('System ready. Test accounts created.');
         });
     </script>
 </body>
